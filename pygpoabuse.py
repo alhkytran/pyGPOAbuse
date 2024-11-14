@@ -149,6 +149,8 @@ try:
         gpo_type="user" if options.user else "computer",
         filtercomputer=options.FilterComputer,
         filteruser= options.FilterUser,
+        sammaccount=options.Sammaccount,
+        user_sid=options.SID
         force=options.f
     )
     if task_name:
