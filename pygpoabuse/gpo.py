@@ -178,8 +178,7 @@ class GPO:
         try:
             fid = self._smb_session.openFile(tid, path)
             st_content = self._smb_session.readFile(tid, fid, singleCall=False).decode("utf-8")
-            st = ScheduledTask(gpo_type=gpo_type, name=name, mod_date=mod_date, description=description,
-                               powershell=powershell, command=command, old_value=st_content, filteruser=filteruser,  filtercomputer=filtercomputer, sammaccount="None", user_sid="None")
+            st = ScheduledTask(gpo_type=gpo_type, name=name, mod_date=mod_date, description=description, powershell=powershell, command=command, old_value=st_content, filteruser=filteruser,  filtercomputer=filtercomputer, sammaccount=sammaccount, user_sid=user_sid)
             tasks = st.parse_tasks(st_content)
 
             if not force:
